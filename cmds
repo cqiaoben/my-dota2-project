@@ -26,4 +26,5 @@ kubectl get pods
 // check logs
 https://console.cloud.google.com/logs/viewer?_ga=1.46400743.1121916743.1488063415&project=spry-bus-159905&minLogLevel=0&expandAll=false&resource=container%2Fcluster_name%2Fget-matchid-0&timestamp=2017-02-27T23:21:22.000000000Z
 
-
+// connect to cloud shell
+gcloud beta sql connect [INSTANCE_ID] --user=root

@@ -13,18 +13,18 @@ spec:
         - image: 'gcr.io/spry-bus-159905/dota2:v1'
           name: web
           env:
-            - name: WORDPRESS_DB_HOST
+            - name: HOST
               # Connect to the SQL proxy over the local network on a fixed port.
               # Insert the port number used by your database.
               value: 127.0.0.1:3306
             # These secrets are required to start the pod.
             # [START cloudsql_secrets]
-            - name: 12321
+            - name: PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: cloudsql
                   key: password
-            - name: root
+            - name: USER
               valueFrom:
                 secretKeyRef:
                   name: cloudsql

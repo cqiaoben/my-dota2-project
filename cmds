@@ -1,9 +1,9 @@
 // build from scratch
-docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v1 .
+docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v2 .
 // run foreground (local testing)
 docker run gcr.io/spry-bus-159905/dota2:v1
 // push container
-gcloud docker push gcr.io/spry-bus-159905/dota2:v1
+gcloud docker push gcr.io/spry-bus-159905/dota2:v2
 
 
 // run image
@@ -16,8 +16,8 @@ kubectl create -f ./sql_config.yaml
 
 
 // get credential
-gcloud container clusters get-credentials get-matchid-0 \
-    --zone us-west1-a --project spry-bus-159905
+gcloud container clusters get-credentials get-matchid-2 \
+    --zone us-central1-a --project spry-bus-159905
 
 kubectl get deployment
 
@@ -28,3 +28,9 @@ https://console.cloud.google.com/logs/viewer?_ga=1.46400743.1121916743.148806341
 
 // connect to cloud shell
 gcloud beta sql connect [INSTANCE_ID] --user=root
+
+// an estimation of lastest match_seq_num
+https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=987205C8EF565CB4208D3B9235C40190
+
+// api to get new matches
+https://api.steampowered.com/IDOTA2Match_570/GetMatchHistoryBySequenceNum/v1/?key=987205C8EF565CB4208D3B9235C40190&start_at_match_seq_num=&matches_requested=100

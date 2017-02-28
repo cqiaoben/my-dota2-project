@@ -3,14 +3,16 @@ var Handler = require('./mysql_handler');
 var mysql_handler = new Handler();
 var options = {
   host: 'api.steampowered.com',
-  path: ('/IDOTA2Match_570/GetMatchHistoryBySequenceNum/v1/'
+  path_pre: ('/IDOTA2Match_570/GetMatchHistoryBySequenceNum/v1/'
       + '?key=987205C8EF565CB4208D3B9235C40190'
-      + '&start_at_match_seq_num=300100000&matches_requested=100')
+      + '&start_at_match_seq_num='),
+  path_post: '&matches_requested=100'
 };
 
-var match_pool = [];
+var match_seq_num = 2642108334;
 
 var parseAndSend = function(str) {
+  var match_pool = [];
   var json = JSON.parse(str);
   if (json['result']['status'] == 0) {
     return false;
@@ -18,6 +20,9 @@ var parseAndSend = function(str) {
   var count = 0;
   var detecting_pool = {1:1, 2:1, 3:1, 4:1, 16:1, 22:1};
   json['result']['matches'].forEach(function(match) {
+    if (match_seq_num <= match['match_seq_num']) {
+      match_seq_num = match['match_seq_num'] + 1;
+    }
     var lobby_type = match['lobby_type'];
     if (lobby_type != 0 && lobby_type != 1 && lobby_type != 7) {
       return;
@@ -41,12 +46,12 @@ var parseAndSend = function(str) {
 var callback = function(response) {
   var str = '';
 
-  //another chunk of data has been recieved, so append it to `str`
+  //another chunk of data has been received, so append it to `str`
   response.on('data', function (chunk) {
     str += chunk;
   });
 
-  //the whole response has been recieved, so we just print it out here
+  //the whole response has been received, so we just print it out here
   response.on('end', function () {
     parseAndSend(str);
   });
@@ -56,20 +61,13 @@ var callback = function(response) {
   });
 }
 
-var num_req = 5;
-
-var request_func = function() {
-  http.request(options, callback).end();
-  if (num_req == 0) {
-    return;
+setInterval(function () {
+  try {
+    options.path = options.path_pre + match_seq_num + options.path_post;
+    console.log('[api] ' + options.path);
+    http.request(options, callback).end();
+  } catch (e) {
+    mysql_handler.record_failure(); 
   }
-  num_req = num_req - 1;
-  iter_func();
-}
-
-iter_func = function() {
-  setTimeout(request_func, 5000);
-};
-
-iter_func();
+}, 5000);
 

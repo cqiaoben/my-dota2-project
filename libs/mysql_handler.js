@@ -17,10 +17,10 @@ Handler.prototype.query = function(query_str, func) {
 
     con.connect(function(err) {
       if (err) {
-        console.log('Error connecting to Db');
+        console.log('[Db] Error connecting to Db');
         return;
       }
-      console.log('Connection established');
+      console.log('[Db] Connection established');
     });
     
     con.query(query_str, func);
@@ -41,6 +41,19 @@ Handler.prototype.insert_matches = function(match_pool) {
     try {
       this.query(
         'insert test_matches (match_id) values' + temp_str,
+        function (error, _, _) {
+          if (error) throw error;
+        }
+      );
+    } catch (e) {
+       console.log(e);
+    }
+};
+
+Handler.prototype.record_failure = function() {
+    try {
+      this.query(
+        'insert test_success (success) values (0)',
         function (error, _, _) {
           if (error) throw error;
         }

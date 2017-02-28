@@ -16,7 +16,7 @@ var parseAndSend = function(str) {
   var json;
   try {
     json = JSON.parse(str);
-  } except (e) {
+  } catch (e) {
     // usually too many requests.
     mysql_handler.record_failure(); 
     return false;
@@ -76,5 +76,5 @@ setInterval(function () {
   } catch (e) {
     mysql_handler.record_failure(); 
   }
-}, 10000);
+}, 5000);
 

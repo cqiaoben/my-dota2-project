@@ -38,6 +38,7 @@ Handler.prototype.insert_matches = function(match_pool) {
       temp_str = temp_str + '(' + match_pool[i] + '),';
     }
     temp_str = temp_str + '(' + match_pool[match_pool.length - 1] + ')';
+    console.log(temp_str);
     try {
       this.query(
         'insert test_matches (match_id) values' + temp_str,

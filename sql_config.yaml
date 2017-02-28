@@ -10,7 +10,7 @@ spec:
         app: cs193s
     spec:
       containers:
-        - image: 'gcr.io/spry-bus-159905/dota2:v1'
+        - image: 'gcr.io/spry-bus-159905/dota2:v3'
           name: web
           env:
             - name: HOST

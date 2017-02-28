@@ -53,6 +53,7 @@ var callback = function(response) {
 
   //the whole response has been received, so we just print it out here
   response.on('end', function () {
+    console.log('[str] '+ str);
     parseAndSend(str);
   });
 

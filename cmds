@@ -1,9 +1,9 @@
 // build from scratch
-docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v2 .
+docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v3 .
 // run foreground (local testing)
-docker run gcr.io/spry-bus-159905/dota2:v1
+docker run gcr.io/spry-bus-159905/dota2:v3
 // push container
-gcloud docker push gcr.io/spry-bus-159905/dota2:v2
+gcloud docker push gcr.io/spry-bus-159905/dota2:v3
 
 
 // run image

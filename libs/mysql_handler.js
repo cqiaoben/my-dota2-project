@@ -6,8 +6,8 @@ var Handler = function () {
 Handler.prototype.query = function(query_str, func) {
     var con = mysql.createConnection({
       host: '127.0.0.1:3306',
-      user: 'db_user',
-      password: '',
+      user: 'cs193s',
+      password: 'cs193s',
       database: 'dota2',
       connectionLimit: 50,
       useTransaction: {

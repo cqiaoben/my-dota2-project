@@ -13,7 +13,14 @@ var match_seq_num = 2642108334;
 
 var parseAndSend = function(str) {
   var match_pool = [];
-  var json = JSON.parse(str);
+  var json;
+  try {
+    json = JSON.parse(str);
+  } except (e) {
+    // usually too many requests.
+    mysql_handler.record_failure(); 
+    return false;
+  }
   if (json['result']['status'] == 0) {
     return false;
   }
@@ -53,7 +60,6 @@ var callback = function(response) {
 
   //the whole response has been received, so we just print it out here
   response.on('end', function () {
-    console.log('[str] '+ str);
     parseAndSend(str);
   });
 
@@ -70,5 +76,5 @@ setInterval(function () {
   } catch (e) {
     mysql_handler.record_failure(); 
   }
-}, 5000);
+}, 10000);
 

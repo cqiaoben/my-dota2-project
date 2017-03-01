@@ -5,7 +5,7 @@ var Handler = function () {
 
 Handler.prototype.query = function(query_str, func) {
     var con = mysql.createConnection({
-      host: '127.0.0.1',
+      host: '104.197.102.56',//'127.0.0.1',
       user: 'cs193s',
       password: 'cs193s',
       database: 'dota2',
@@ -39,29 +39,21 @@ Handler.prototype.insert_matches = function(match_pool) {
     }
     temp_str = temp_str + '(' + match_pool[match_pool.length - 1] + ')';
     console.log(temp_str);
-    try {
-      this.query(
-        'insert test_matches (match_id) values' + temp_str,
-        function (error, _, _) {
-          if (error) throw error;
-        }
-      );
-    } catch (e) {
-       console.log(e);
-    }
+    this.query(
+      'insert test_matches (match_id) values' + temp_str,
+      function (error, _, _) {
+        if (error) throw error;
+      }
+    );
 };
 
 Handler.prototype.record_failure = function() {
-    try {
-      this.query(
-        'insert test_success (success) values (0)',
-        function (error, _, _) {
-          if (error) throw error;
-        }
-      );
-    } catch (e) {
-       console.log(e);
-    }
+    this.query(
+      'insert test_success (success) values (0)',
+      function (error, _, _) {
+        if (error) throw error;
+      }
+    );
 };
 
 module.exports = Handler;

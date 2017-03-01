@@ -1,4 +1,4 @@
-var http = require('http');
+var https = require('https');
 var Handler = require('./mysql_handler');
 var mysql_handler = new Handler();
 var options = {
@@ -10,6 +10,19 @@ var options = {
 };
 
 var match_seq_num = 2642108334;
+
+var timer = function () {
+  setTimeout(function () {
+    try {
+      options.path = options.path_pre + match_seq_num + options.path_post;
+      console.log('[api] ' + options.path);
+      https.request(options, callback).end();
+    } catch (e) {
+      console.log(e);
+      mysql_handler.record_failure(); 
+    }
+  }, 5000);
+};
 
 var parseAndSend = function(str) {
   var match_pool = [];
@@ -61,6 +74,7 @@ var callback = function(response) {
   //the whole response has been received, so we just print it out here
   response.on('end', function () {
     parseAndSend(str);
+    timer();
   });
 
   response.on('error', function(e) {
@@ -68,13 +82,4 @@ var callback = function(response) {
   });
 }
 
-setInterval(function () {
-  try {
-    options.path = options.path_pre + match_seq_num + options.path_post;
-    console.log('[api] ' + options.path);
-    http.request(options, callback).end();
-  } catch (e) {
-    mysql_handler.record_failure(); 
-  }
-}, 5000);
-
+timer();

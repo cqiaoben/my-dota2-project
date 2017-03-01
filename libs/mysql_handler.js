@@ -1,59 +1,58 @@
 var mysql = require('mysql');
 
 var Handler = function () {
+  this.pool = mysql.createPool({
+    host: /*'104.197.102.56',*/'127.0.0.1',
+    user: 'cs193s',
+    password: 'cs193s',
+    database: 'dota2',
+    connectionLimit: 1
+  });
 };
 
 Handler.prototype.query = function(query_str, func) {
-    var con = mysql.createConnection({
-      host: /*'104.197.102.56',*/'127.0.0.1',
-      user: 'cs193s',
-      password: 'cs193s',
-      database: 'dota2',
-      connectionLimit: 50,
-      useTransaction: {
-         connectionLimit: 20
-      }
-    });
-
-    con.connect(function(err) {
+  var connect = function (pool) {
+    pool.getConnection(function(err, connection) {
       if (err) {
-        console.log('[Db] Error connecting to Db');
-        return;
+        if (err.code == 'PROTOCOL_CONNECTION_LOST') {
+          console.log('[DB] retrying connection');
+          setTimeout(connect, 10000);
+        } else {
+          throw err;
+        }
       }
-      console.log('[Db] Connection established');
+      connection.query(query_str, function (err, results, fields) {
+        connection.release();
+        func(err, results, fields);
+      });
     });
-    
-    con.query(query_str, func);
-
-    con.end(function(err) {
-      // The connection is terminated gracefully
-      // Ensures all previously enqueued queries are still
-      // before sending a COM_QUIT packet to the MySQL server.
-    });
+  };
+  // connect
+  connect(this.pool);
 };
 
 Handler.prototype.insert_matches = function(match_pool) {
-    var temp_str = '';
-    for (var i = 0; i < match_pool.length - 1; i++) {
-      temp_str = temp_str + '(' + match_pool[i] + '),';
+  var temp_str = '';
+  for (var i = 0; i < match_pool.length - 1; i++) {
+    temp_str = temp_str + '(' + match_pool[i] + '),';
+  }
+  temp_str = temp_str + '(' + match_pool[match_pool.length - 1] + ')';
+  console.log(temp_str);
+  this.query(
+    'insert test_matches (match_id) values' + temp_str,
+    function (error, _, _) {
+      if (error) throw error;
     }
-    temp_str = temp_str + '(' + match_pool[match_pool.length - 1] + ')';
-    console.log(temp_str);
-    this.query(
-      'insert test_matches (match_id) values' + temp_str,
-      function (error, _, _) {
-        if (error) throw error;
-      }
-    );
+  );
 };
 
-Handler.prototype.record_failure = function() {
-    this.query(
-      'insert test_success (success) values (0)',
-      function (error, _, _) {
-        if (error) throw error;
-      }
-    );
+Handler.prototype.record_failure = function () {
+  this.query(
+    'insert test_success (success) values (0)',
+    function (error, _, _) {
+      if (error) throw error;
+    }
+  );
 };
 
 module.exports = Handler;

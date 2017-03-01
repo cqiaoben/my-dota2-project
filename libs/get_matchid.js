@@ -13,14 +13,9 @@ var match_seq_num = 2642108334;
 
 var timer = function () {
   setTimeout(function () {
-    try {
-      options.path = options.path_pre + match_seq_num + options.path_post;
-      console.log('[api] ' + options.path);
-      https.request(options, callback).end();
-    } catch (e) {
-      console.log(e);
-      mysql_handler.record_failure(); 
-    }
+    options.path = options.path_pre + match_seq_num + options.path_post;
+    console.log('[api] ' + options.path);
+    https.request(options, callback).end();
   }, 5000);
 };
 

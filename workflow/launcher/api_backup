@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build --no-cache -t gcr.io/spry-bus-159905/backup:$1 -f dockerfile/api_backup.docker .
+docker build --no-cache -t gcr.io/spry-bus-159905/backup:$1 -f dockerfile/backup_api_hitter.docker .
 gcloud docker push gcr.io/spry-bus-159905/backup:$1
 
 rm -f temp.yaml

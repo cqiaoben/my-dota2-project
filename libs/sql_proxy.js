@@ -1,9 +1,8 @@
 var Comm = require('./communication');
 
-var conn = new Comm.Connection(host, 55555);
-
 var Proxy = function (host) {
   this.host = host;
+  this.conn = new Comm.Connection(this.host, 55555);
 };
 
 Proxy.prototype.insert_matches = function(matchpool) {
@@ -11,7 +10,7 @@ Proxy.prototype.insert_matches = function(matchpool) {
     data: matchpool,
     query_type: 'insert_matches'
   });
-  conn.send(query, (_) => {
+  this.conn.send(query, (_) => {
     console.log('sent by proxy');
   });
 };

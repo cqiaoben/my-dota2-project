@@ -1,5 +1,6 @@
 From node:alpine
 RUN apk add --no-cache git
+RUN npm install mysql
 RUN git clone https://github.com/cqiaoben/my-dota2-project.git ./cs193s
 EXPOSE 55555
 cmd node ./cs193s/sql_service/mysql_handler.js DB_USER DB_PASSWORD

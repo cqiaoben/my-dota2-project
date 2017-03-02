@@ -41,7 +41,7 @@ var server = new Comm.Server((query, res) => {
   res.end();
 });
 
-server.listen(8081);
+server.listen(55555);
 
 var query_helper = function(query_str, func) {
   var connect = function (pool) {

@@ -1,0 +1,5 @@
+From node:alpine
+RUN apk add --no-cache git
+RUN git clone https://github.com/cqiaoben/my-dota2-project.git ./cs193s
+EXPOSE 12345
+cmd node ./cs193s/api_backup/backup.js SQL_HOST

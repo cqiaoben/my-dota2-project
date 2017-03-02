@@ -1,0 +1,13 @@
+#!/bin/bash
+
+docker build --no-cache -t gcr.io/spry-bus-159905/api-hitter:$1 -f dockerfile/api_hitter.docker .
+gcloud docker push gcr.io/spry-bus-159905/api-hitter:$1
+
+rm -f temp.yaml
+
+FILE=$(cat yamlfile/api_node.yaml)
+FILE1=${FILE/\$1/$1}
+FILE2=${FILE1/\$2/$2}
+FILE3=${FILE3/\$3/$3}
+echo $FILE3 > temp.yaml
+kubectl create -f ./temp.yaml

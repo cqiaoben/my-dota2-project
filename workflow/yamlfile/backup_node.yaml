@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: backup-api-hitter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: backup
+    spec:
+      containers:
+      - name: backup-api-hitter
+        image: gcr.io/spry-bus-159905/backup:$1
+        ports:
+        - containerPort: 12345
+        env:
+        - name: SQL_HOST
+          value: '$2'

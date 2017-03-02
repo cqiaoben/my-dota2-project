@@ -1,5 +1,8 @@
 // build from scratch
 docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v4-3 .
+
+docker build --no-cache -t gcr.io/spry-bus-159905/backup:v1 -f dockerfiles/toy_backup.docker .
+docker build --no-cache -t gcr.io/spry-bus-159905/send:v1 -f dockerfiles/toy_send.docker .
 // run foreground (local testing)
 docker run gcr.io/spry-bus-159905/dota2:v3
 // push container

@@ -40,8 +40,7 @@ Connection.prototype.send = function(data, func) {
   });
 
   req.on('error', function(e) {
-    console.log('Problem with connection to '+ this.options.host
-      + ':' + this.options.port);
+    console.log(e);
   });
 
   req.write(data);

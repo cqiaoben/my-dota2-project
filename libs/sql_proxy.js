@@ -2,7 +2,7 @@ var Comm = require('./communication');
 
 var Proxy = function (host) {
   this.host = host;
-  this.conn = new Comm.Connection(this.host, 55555);
+  this.conn = new Comm.Connection(this.host, 8081);
 };
 
 Proxy.prototype.insert_matches = function(matchpool) {

@@ -22,7 +22,7 @@ var Server = function(func) {
             func(body, response);
         });
     } else {
-      reponse.end();
+      response.end();
     }
   });
 };

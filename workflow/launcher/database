@@ -1,12 +1,12 @@
 #!/bin/bash
 
-docker build --no-cache -t gcr.io/spry-bus-159905/db:$1 -f dockerfile/db.docker .
+docker build --no-cache -t gcr.io/spry-bus-159905/db:$1 -f dockerfile/database.docker .
 gcloud docker push gcr.io/spry-bus-159905/db:$1
 
 rm -f temp.yaml
 
 FILE=$(cat yamlfile/sql.yaml)
 FILE1=${FILE/\$1/$1}
-echo $FILE1 > temp.yaml
+echo "$FILE1" > temp.yaml
 kubectl create -f ./temp.yaml
 

@@ -9,5 +9,5 @@ FILE=$(cat yamlfile/api_node.yaml)
 FILE1=${FILE/\$1/$1}
 FILE2=${FILE1/\$2/$2}
 FILE3=${FILE3/\$3/$3}
-echo $FILE3 > temp.yaml
+echo "$FILE3" > temp.yaml
 kubectl create -f ./temp.yaml

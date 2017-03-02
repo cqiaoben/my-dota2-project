@@ -1,9 +1,9 @@
 // build from scratch
-docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v4-2 .
+docker build --no-cache -t gcr.io/spry-bus-159905/dota2:v4-3 .
 // run foreground (local testing)
 docker run gcr.io/spry-bus-159905/dota2:v3
 // push container
-gcloud docker push gcr.io/spry-bus-159905/dota2:v4-2
+gcloud docker push gcr.io/spry-bus-159905/dota2:v4-3
 
 
 // run image
@@ -34,3 +34,6 @@ https://api.steampowered.com/IDOTA2Match_570/GetMatchHistory/V001/?key=987205C8E
 
 // api to get new matches
 https://api.steampowered.com/IDOTA2Match_570/GetMatchHistoryBySequenceNum/v1/?key=987205C8EF565CB4208D3B9235C40190&start_at_match_seq_num=&matches_requested=100
+
+// connecting pods
+https://kubernetes.io/docs/user-guide/connecting-applications/

@@ -16,7 +16,9 @@ Handler.prototype.query = function(query_str, func) {
       if (err) {
         if (err.code == 'PROTOCOL_CONNECTION_LOST') {
           console.log('[DB] retrying connection');
-          setTimeout(connect, 10000);
+          setTimeout(function () {
+            connect(pool);
+          }, 10000);
         } else {
           throw err;
         }

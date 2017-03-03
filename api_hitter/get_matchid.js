@@ -2,6 +2,8 @@ var Api = require('../libs/api_request');
 var Proxy = require('../libs/sql_proxy');
 var Comm = require('../libs/communication');
 
+console.log(process.argv);
+
 var user = new Api.User('DB68D75E77E22C0888179CB78F0BF3C9');
 var validate_match = Api.validate_match;
 var proxy = new Proxy(process.argv[3]);

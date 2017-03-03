@@ -1,6 +1,8 @@
 var mysql = require('mysql');
 var Comm = require('../libs/communication');
 
+console.log(process.argv);
+
 var pool = mysql.createPool({
     host: 'localhost',
     user: process.argv[2],

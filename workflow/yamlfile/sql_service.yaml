@@ -6,7 +6,7 @@ metadata:
     run: db
 spec:
   ports:
-  - port: 8090
+  - port: 55555
     targetPort: 55555
     protocol: TCP
   selector:

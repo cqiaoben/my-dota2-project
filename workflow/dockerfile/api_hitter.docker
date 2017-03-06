@@ -2,4 +2,4 @@ From node:alpine
 RUN apk add --no-cache git
 RUN npm install mysql
 RUN git clone https://github.com/cqiaoben/my-dota2-project.git ./cs193s
-cmd node ./cs193s/api_hitter/get_matchid.js backup db
+cmd node ./cs193s/api_hitter/get_matchid.js ${BACKUP_HOST} ${SQL_HOST}

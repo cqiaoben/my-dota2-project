@@ -7,15 +7,25 @@ console.log(process.argv);
 var user = new Api.User('DB68D75E77E22C0888179CB78F0BF3C9');
 var validate_match = Api.validate_match;
 var proxy = new Proxy(process.argv[3]);
-var connection = new Comm.Connection(process.argv[2], 8080);
+var connection = new Comm.Connection(process.argv[2], 12345);
 
-var match_seq_num = 2642108334;
+var match_seq_num;
+var start = () => {
+  proxy.get_max_seq_num(
+    function(result) {
+      match_seq_num = result;
+      timer();
+    },
+    (_) => {
+      setTimeout(start, 5000);
+    }
+  );
+};
 
 var timer = () => {
   setTimeout(() => {
     user.request(match_seq_num, (str) => {
       parse_and_send(str);
-      timer();
     });
   }, 5000);
 };
@@ -31,6 +41,10 @@ var parse_and_send = (str) => {
       (match_seq) => {
         console.log(match_seq);
         match_seq_num = JSON.parse(match_seq);
+        timer();
+      },
+      (_) => {
+        timer();
       }
     );
     return;
@@ -39,9 +53,10 @@ var parse_and_send = (str) => {
     return;
   }
   var count = 0;
+  var max_seq_num = match_seq_num;
   json['result']['matches'].forEach((match) => {
-    if (match_seq_num <= match['match_seq_num']) {
-      match_seq_num = match['match_seq_num'] + 1;
+    if (max_seq_num <= match['match_seq_num']) {
+      max_seq_num = match['match_seq_num'] + 1;
     }
     if (!validate_match(match)) {
       return;
@@ -50,8 +65,20 @@ var parse_and_send = (str) => {
     count++;
   })
   // send result to db
-  proxy.insert_matches(match_pool);
+  proxy.insert_matches(
+    {
+      'match_pool': match_pool,
+      'seq_num': max_seq_num
+    },
+    () => {
+      match_seq_num = max_seq_num;
+      timer();
+    },
+    (_) => {
+      timer();
+    }
+  );
   console.log(count);
 }
 
-timer();
+start();

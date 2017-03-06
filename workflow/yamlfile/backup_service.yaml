@@ -6,7 +6,7 @@ metadata:
     run: backup
 spec:
   ports:
-  - port: 8080
+  - port: 12345
     targetPort: 12345
     protocol: TCP
   selector:

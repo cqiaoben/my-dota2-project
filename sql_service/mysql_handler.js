@@ -13,39 +13,51 @@ var pool = mysql.createPool({
 
 var registry = {};
 
-registry.insert_matches = function(match_pool) {
-  var temp_str = '';
-  for (var i = 0; i < match_pool.length - 1; i++) {
-    temp_str = temp_str + '(' + match_pool[i] + '),';
-  }
-  temp_str = temp_str + '(' + match_pool[match_pool.length - 1] + ')';
-  console.log(temp_str);
+registry.insert_matches = (data, res) => {
+  match_pool = data['match_pool'];
+  seq_num = data['seq_num'];
   query_helper(
-    'insert test_matches (match_id) values' + temp_str,
-    function (error, _, _) {
+    [
+      'insert test_matches (match_id) values :test_matches_items',
+      'update seq set seq_num = :seq_num where seq_num < :seq_num'
+    ],
+    {
+      test_matches_items: match_pool,
+      seq_num: seq_num
+    },
+    // error handling or result handling
+    function (error, _r, _f) {
       if (error) throw error;
     }
+  );
+  console.log('[sql] Received by sql_proxy.');
+  res.end();
+};
+
+registry.get_max_seq_num = (_, res) => {
+  query_helper(
+    [
+      'select seq_num from seq limit 1'
+    ],
+    {},
+    function (_, results, _) {
+      var seq_num = results[0].seq_num;
+      seq_num = seq_num.toString();
+      res.write(seq_num);
+      console.log('[sql] Max seq number ' + seq_num + ' sent by sql_proxy');
+      res.end();
+    } 
   );
 };
 
-registry.record_failure = function () {
-  query_helper.query(
-    'insert test_success (success) values (0)',
-    function (error, _, _f) {
-      if (error) throw error;
-    }
-  );
-};
 var server = new Comm.Server((query, res) => {
   var parsed = JSON.parse(query);
-  registry[parsed['query_type']](parsed['data']);
-  console.log('[sql] Received by sql_proxy.');
-  res.end();
+  registry[parsed['query_type']](parsed['data'], res);
 });
 
 server.listen(55555);
 
-var query_helper = function(query_str, func) {
+var query_helper = function(query_strs, args, func) {
   var connect = function (pool) {
     pool.getConnection(function(err, connection) {
       if (err) {
@@ -59,9 +71,45 @@ var query_helper = function(query_str, func) {
           throw err;
         }
       }
-      connection.query(query_str, function (err, results, fields) {
-        connection.release();
-        func(err, results, fields);
+      connection.config.queryFormat = function (query, values) {
+        if (!values) return query;
+        return query.replace(/\:(\w+)/g, function (txt, key) {
+          if (values.hasOwnProperty(key)) {
+             if (!Array.isArray(values[key])) {
+               return this.escape(values[key]);
+             }
+             // If the escaped elem is an array, aggregate it
+             var str = '';
+             values[key].forEach(function(elem) {
+               str += ' (' + this.escape(elem) + '),';
+             });
+             return str.substr(0, str.length - 1);
+          }
+          return txt;
+        }.bind(this));
+      };
+      connection.beginTransaction((err) => {
+        if (err) { throw err; }
+        var query_factory = (query_strs, args, func) => {
+          connection.query(
+            query_strs.shift(),
+            args,
+            (err, results, fields) => {
+              if (query_strs.length == 0) {
+                connection.release();
+              }
+              if (err) {
+                connection.rollback(() => {
+                  throw err;
+                });
+              }
+              func(err, results, fields);
+              if (query_strs.length == 0) return;
+              query_factory(query_strs, args, func);
+            }
+          );
+        };
+        query_factory(query_strs, args, func);
       });
     });
   };

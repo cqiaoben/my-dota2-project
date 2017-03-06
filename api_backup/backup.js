@@ -27,9 +27,10 @@ var parse_and_send = (str, response, match_seq_num) => {
     return false;
   }
   var count = 0;
+  var max_seq_num = match_seq_num;
   json['result']['matches'].forEach((match) => {
-    if (match_seq_num <= match['match_seq_num']) {
-      match_seq_num = match['match_seq_num'] + 1;
+    if (max_seq_num <= match['match_seq_num']) {
+      max_seq_num = match['match_seq_num'] + 1;
     }
     if (!validate_match(match)) {
       return;
@@ -38,9 +39,20 @@ var parse_and_send = (str, response, match_seq_num) => {
     count++;
   })
   // send result to db
-  proxy.insert_matches(match_pool);
-  response.write(JSON.stringify(match_seq_num)); 
-  response.end();
+  proxy.insert_matches(
+    {
+      'match_pool': match_pool,
+      'seq_num': max_seq_num
+    },
+    () => {
+      match_seq_num = max_seq_num;
+      response.write(JSON.stringify(match_seq_num)); 
+      response.end();
+    }, (_) => {
+      response.write(JSON.stringify(match_seq_num));
+      response.end();
+    }
+  );
   console.log(count);
 }
 

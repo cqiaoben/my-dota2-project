@@ -1,0 +1,14 @@
+# create tables
+create table test_matches (
+   match_id Bigint,
+   ts TIMESTAMP default current_timestamp,
+   primary key(match_id));
+
+
+# create trigger to record max_seq_num
+
+create table seq (
+   seq_num Bigint,
+   ts TIMESTAMP default current_timestamp on update current_timestamp);
+
+insert seq (seq_num) values (-1);

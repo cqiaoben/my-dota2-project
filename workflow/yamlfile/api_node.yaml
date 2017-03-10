@@ -9,6 +9,8 @@ spec:
       labels:
         run: api-hitter
     spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
       containers:
       - name: api-hitter
         image: gcr.io/spry-bus-159905/api-hitter:$1
@@ -19,3 +21,5 @@ spec:
           value: "$2"
         - name: SQL_HOST
           value: "$3"
+        - name: SALT_HOST
+          value: "$4"

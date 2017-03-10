@@ -7,7 +7,8 @@ console.log(process.argv);
 var user = new Api.User('DB68D75E77E22C0888179CB78F0BF3C9');
 var validate_match = Api.validate_match;
 var proxy = new Proxy(process.argv[3]);
-var connection = new Comm.Connection(process.argv[2], 12345);
+var backup_connection = new Comm.Connection(process.argv[2], 12345);
+var salt_connection = new Comm.Connection(process.argv[4], 55554);
 
 var match_seq_num;
 var start = () => {
@@ -36,7 +37,7 @@ var parse_and_send = (str) => {
   try {
     json = JSON.parse(str);
   } catch (e) {
-    connection.send(
+    backup_connection.send(
       JSON.stringify(match_seq_num),
       (match_seq) => {
         console.log(match_seq);
@@ -72,7 +73,17 @@ var parse_and_send = (str) => {
     },
     () => {
       match_seq_num = max_seq_num;
-      timer();
+      salt_connection.send(
+        JSON.stringify(match_pool),
+        // success
+        (_) => {
+          timer();
+        },
+        // failure
+        () => {
+          timer();
+        }
+      );
     },
     (_) => {
       timer();

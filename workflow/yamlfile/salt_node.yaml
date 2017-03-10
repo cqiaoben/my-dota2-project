@@ -1,23 +1,21 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: backup-api-hitter
+  name: salt-node
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        run: backup
+        run: salt
     spec:
       nodeSelector:
         cloud.google.com/gke-nodepool: default-pool
       containers:
-      - name: backup-api-hitter
-        image: gcr.io/spry-bus-159905/backup:$1
+      - name: salt
+        image: gcr.io/spry-bus-159905/salt:$1
         ports:
-        - containerPort: 12345
+        - containerPort: 55554
         env:
-        - name: SQL_HOST
+        - name: REPLAY_HOST
           value: '$2'
-        - name: SALT_HOST
-          value: '$3'

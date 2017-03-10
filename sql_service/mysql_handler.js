@@ -4,7 +4,7 @@ var Comm = require('../libs/communication');
 console.log(process.argv);
 
 var pool = mysql.createPool({
-    host: 'localhost',
+    host: '104.197.102.56',//'localhost',
     user: process.argv[2],
     password: process.argv[3],
     database: 'dota2',

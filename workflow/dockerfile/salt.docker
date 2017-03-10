@@ -1,6 +1,7 @@
 From node:alpine
 RUN apk add --no-cache git
 RUN npm install mysql
+RUN npm install https://github.com/Arcana/node-dota2.git
 RUN git clone https://github.com/cqiaoben/my-dota2-project.git ./cs193s
-cmd node ./cs193s/api_hitter/get_matchid.js \
-    ${BACKUP_HOST} ${SQL_HOST} ${SALT_HOST}
+EXPOSE 55554
+cmd node ./cs193s/salt_fetcher/salt_fetcher.js ${REPLAY_HOST}

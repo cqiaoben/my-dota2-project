@@ -1,1 +1,18 @@
-This is a git repo.
+How to set up:
+
+1. create google cloud mysql instance. Follow the steps in 
+https://cloud.google.com/sql/docs/mysql/connect-container-engine
+
+2. create container cluster. Make sure it has access to mysql.
+for the last commit container cluster contains one node-pool which
+contains 3 micro node.
+
+Before deployment:
+
+replace <project_id>, <region_id>, <sql_instance>
+ in workflow/yamlfile and workfile/dockerfile with your ids.
+
+How to deploy:
+
+1. go to workflow folder
+2. run bash launcher/start.sh <version_number>

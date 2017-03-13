@@ -4,18 +4,18 @@ var Comm = require('../libs/communication');
 console.log(process.argv);
 
 var pool = mysql.createPool({
-    host: '104.197.102.56',//'localhost',
-    user: process.argv[2],
-    password: process.argv[3],
-    database: 'dota2',
-    connectionLimit: 1
+  host: 'localhost',
+  user: process.argv[2],
+  password: process.argv[3],
+  database: 'dota2',
+  connectionLimit: 1
 });
 
 var registry = {};
 
 registry.insert_matches = (data, res) => {
-  match_pool = data['match_pool'];
-  seq_num = data['seq_num'];
+  var match_pool = data['match_pool'];
+  var seq_num = data['seq_num'];
   query_helper(
     [
       'insert test_matches (match_id) values :test_matches_items',
@@ -40,7 +40,7 @@ registry.get_max_seq_num = (_, res) => {
       'select seq_num from seq limit 1'
     ],
     {},
-    function (_, results, _) {
+    function (_, results, __) {
       var seq_num = results[0].seq_num;
       seq_num = seq_num.toString();
       res.write(seq_num);
@@ -75,15 +75,15 @@ var query_helper = function(query_strs, args, func) {
         if (!values) return query;
         return query.replace(/\:(\w+)/g, function (txt, key) {
           if (values.hasOwnProperty(key)) {
-             if (!Array.isArray(values[key])) {
-               return this.escape(values[key]);
-             }
-             // If the escaped elem is an array, aggregate it
-             var str = '';
-             values[key].forEach(function(elem) {
-               str += ' (' + this.escape(elem) + '),';
-             });
-             return str.substr(0, str.length - 1);
+            if (!Array.isArray(values[key])) {
+              return this.escape(values[key]);
+            }
+            // If the escaped elem is an array, aggregate it
+            var str = '';
+            values[key].forEach(function(elem) {
+              str += ' (' + this.escape(elem) + '),';
+            });
+            return str.substr(0, str.length - 1);
           }
           return txt;
         }.bind(this));

@@ -21,10 +21,14 @@ var parse_and_send = (str, response, match_seq_num) => {
     json = JSON.parse(str);
   } catch (e) {
     console.log('[Backup] Too many requests');
-    return false;
+    response.statusCode = 400;
+    response.end();
+    return;
   }
   if (json['result']['status'] == 0) {
-    return false;
+    response.statusCode = 400;
+    response.end();
+    return;
   }
   var count = 0;
   var max_seq_num = match_seq_num;
@@ -37,7 +41,7 @@ var parse_and_send = (str, response, match_seq_num) => {
     }
     match_pool.push(match['match_id']);
     count++;
-  })
+  });
   // send result to db
   proxy.insert_matches(
     {
@@ -54,7 +58,7 @@ var parse_and_send = (str, response, match_seq_num) => {
     }
   );
   console.log(count);
-}
+};
 
   
 server.listen(12345);

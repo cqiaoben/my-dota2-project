@@ -10,10 +10,10 @@ spec:
         run: salt
     spec:
       nodeSelector:
-        cloud.google.com/gke-nodepool: default-pool
+        cluster: salt-pool
       containers:
       - name: salt
-        image: gcr.io/spry-bus-159905/salt:$1
+        image: gcr.io/cs193s-cqiaoben/salt:$1
         ports:
         - containerPort: 55554
         env:

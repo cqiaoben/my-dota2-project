@@ -10,9 +10,9 @@ spec:
         run: db
     spec:
       nodeSelector:
-        cloud.google.com/gke-nodepool: default-pool
+        cluster: default-pool
       containers:
-        - image: 'gcr.io/spry-bus-159905/db:$1'
+        - image: 'gcr.io/cs193s-cqiaoben/db:$1'
           name: replayer-id-fetcher
           env:
             - name: db
@@ -44,7 +44,7 @@ spec:
         - image: b.gcr.io/cloudsql-docker/gce-proxy:1.05
           name: cloudsql-proxy
           command: ["/cloud_sql_proxy", "--dir=/cloudsql",
-                    "-instances=spry-bus-159905:us-central1:cs193s-project-db=tcp:3306",
+                    "-instances=cs193s-cqiaoben:us-central1:db=tcp:3306",
                     "-credential_file=/secrets/cloudsql/credentials.json"]
           volumeMounts:
             - name: cloudsql-oauth-credentials

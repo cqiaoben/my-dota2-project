@@ -44,7 +44,7 @@ Connection.prototype.send = function(data, func, err_func) {
 
   req.write(data);
   req.end();
-}
+};
 
 Server.prototype.listen = function(port) {
   this.server.listen(port, () => {

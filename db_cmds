@@ -11,4 +11,4 @@ create table seq (
    seq_num Bigint,
    ts TIMESTAMP default current_timestamp on update current_timestamp);
 
-insert seq (seq_num) values (-1);
+insert seq (seq_num) values (2666978404);

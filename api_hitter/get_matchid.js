@@ -64,7 +64,7 @@ var parse_and_send = (str) => {
     }
     match_pool.push(match['match_id']);
     count++;
-  })
+  });
   // send result to db
   proxy.insert_matches(
     {
@@ -90,6 +90,6 @@ var parse_and_send = (str) => {
     }
   );
   console.log(count);
-}
+};
 
 start();

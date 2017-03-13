@@ -47,7 +47,7 @@ var validate_match = function(match) {
     return false;
   }
   return true;
-}
+};
 
 module.exports = {
   User: User,

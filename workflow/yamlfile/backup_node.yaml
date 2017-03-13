@@ -10,10 +10,10 @@ spec:
         run: backup
     spec:
       nodeSelector:
-        cloud.google.com/gke-nodepool: default-pool
+        cluster: default-pool
       containers:
       - name: backup-api-hitter
-        image: gcr.io/spry-bus-159905/backup:$1
+        image: gcr.io/cs193s-cqiaoben/backup:$1
         ports:
         - containerPort: 12345
         env:

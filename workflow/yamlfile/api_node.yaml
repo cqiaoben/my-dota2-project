@@ -10,10 +10,10 @@ spec:
         run: api-hitter
     spec:
       nodeSelector:
-        cloud.google.com/gke-nodepool: default-pool
+        cluster: default-pool
       containers:
       - name: api-hitter
-        image: gcr.io/spry-bus-159905/api-hitter:$1
+        image: gcr.io/cs193s-cqiaoben/api-hitter:$1
         ports:
         - containerPort: 80
         env:

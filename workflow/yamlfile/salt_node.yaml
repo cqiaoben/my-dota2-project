@@ -13,7 +13,7 @@ spec:
         cluster: salt-pool
       containers:
       - name: salt
-        image: gcr.io/cs193s-cqiaoben/salt:$1
+        image: gcr.io/cs193s-cqiaoben-3-20/salt:$1
         ports:
         - containerPort: 55554
         env:

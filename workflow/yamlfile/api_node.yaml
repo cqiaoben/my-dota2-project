@@ -13,7 +13,7 @@ spec:
         cluster: default-pool
       containers:
       - name: api-hitter
-        image: gcr.io/cs193s-cqiaoben/api-hitter:$1
+        image: gcr.io/cs193s-cqiaoben-3-20/api-hitter:$1
         ports:
         - containerPort: 80
         env:

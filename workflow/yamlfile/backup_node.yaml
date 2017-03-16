@@ -13,7 +13,7 @@ spec:
         cluster: default-pool
       containers:
       - name: backup-api-hitter
-        image: gcr.io/cs193s-cqiaoben/backup:$1
+        image: gcr.io/cs193s-cqiaoben-3-20/backup:$1
         ports:
         - containerPort: 12345
         env:

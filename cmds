@@ -1,17 +1,17 @@
 // build from scratch
-docker build --no-cache -t gcr.io/cs193s-cqiaoben/dota2:v4-3 .
+docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/dota2:v4-3 .
 
-docker build --no-cache -t gcr.io/cs193s-cqiaoben/backup:v1 -f dockerfiles/toy_backup.docker .
-docker build --no-cache -t gcr.io/cs193s-cqiaoben/send:v1 -f dockerfiles/toy_send.docker .
+docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/backup:v1 -f dockerfiles/toy_backup.docker .
+docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/send:v1 -f dockerfiles/toy_send.docker .
 // run foreground (local testing)
-docker run gcr.io/cs193s-cqiaoben/dota2:v3
+docker run gcr.io/cs193s-cqiaoben-3-20/dota2:v3
 // push container
-gcloud docker push gcr.io/cs193s-cqiaoben/dota2:v4-3
+gcloud docker push gcr.io/cs193s-cqiaoben-3-20/dota2:v4-3
 
 
 // run image
 kubectl run get-matchid-0 \
-    --image=gcr.io/cs193s-cqiaoben/dota2:v1 \
+    --image=gcr.io/cs193s-cqiaoben-3-20/dota2:v1 \
     --port=8080
 
 // or run image with configuration file
@@ -20,14 +20,14 @@ kubectl create -f ./sql_config.yaml
 
 // get credential
 gcloud container clusters get-credentials get-matchid-2 \
-    --zone us-central1-a --project cs193s-cqiaoben
+    --zone us-central1-a --project cs193s-cqiaoben-3-20
 
 kubectl get deployment
 
 kubectl get pods
 
 // check logs
-https://console.cloud.google.com/logs/viewer?_ga=1.46400743.1121916743.1488063415&project=cs193s-cqiaoben&minLogLevel=0&expandAll=false&resource=container%2Fcluster_name%2Fget-matchid-0&timestamp=2017-02-27T23:21:22.000000000Z
+https://console.cloud.google.com/logs/viewer?_ga=1.46400743.1121916743.1488063415&project=cs193s-cqiaoben-3-20&minLogLevel=0&expandAll=false&resource=container%2Fcluster_name%2Fget-matchid-0&timestamp=2017-02-27T23:21:22.000000000Z
 
 // connect to cloud shell
 gcloud beta sql connect [INSTANCE_ID] --user=root

@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: salt
+  annotations:
+    federation.kubernetes.io/replica-set-preferences: |
+        {
+            "rebalance": true,
+            "clusters": {
+                "cluster-europe-west1-b": {
+                    "minReplicas": 2,
+                    "maxReplicas": 4,
+                    "weight": 1
+                },
+                "cluster-asia-east1-a": {
+                    "minReplicas": 2,
+                    "maxReplicas": 4,
+                    "weight": 1
+                }
+            }
+        }
+spec:
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        region: global
+    spec:
+      containers:
+        - name: salt
+          image: gcr.io/cs193s-cqiaoben-3-20/salt:$1
+          ports:
+          - containerPort: 15151
+            hostPort: 11111
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+        - name: kubectl
+          image: gcr.io/google_containers/hyperkube-amd64:v1.5.1
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+          imagePullPolicy: Always
+          command: ['/hyperkube', 'proxy', '--master=http://104.196.214.191:443', '--proxy-port-range=8001-8001']
+

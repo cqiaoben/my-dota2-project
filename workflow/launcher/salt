@@ -1,7 +1,7 @@
 #!/bin/bash
 
-docker build --no-cache -t gcr.io/cs193s-cqiaoben/salt:$1 -f dockerfile/salt.docker .
-gcloud docker push gcr.io/cs193s-cqiaoben/salt:$1
+docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/salt:$1 -f dockerfile/salt.docker .
+gcloud docker push gcr.io/cs193s-cqiaoben-3-20/salt:$1
 
 rm -f temp.yaml
 

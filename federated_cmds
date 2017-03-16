@@ -1,0 +1,38 @@
+export FED_HOST_CLUSTER=us-east1-b
+
+export FED_PROJECT=cs193s-cqiaoben-3-20
+
+export FED_DNS_ZONE=cqiaoben.com
+
+# create clusters
+
+gcloud container clusters create gce-us-east1-b --project=${FED_PROJECT} \
+--zone=us-east1-b --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=0 --max-nodes=5
+
+gcloud container clusters create gce-europe-west1-b --project=${FED_PROJECT} \
+--zone=europe-west1-b --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=0 --max-nodes=5 
+
+gcloud container clusters create gce-asia-east1-a --project=${FED_PROJECT} \
+--zone=asia-east1-a --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=0 --max-nodes=5
+
+# get credentials
+
+gcloud -q container clusters get-credentials gce-us-east1-b --zone=us-east1-b --project=${FED_PROJECT}
+
+gcloud -q container clusters get-credentials gce-europe-west1-b --zone=europe-west1-b --project=${FED_PROJECT}
+
+gcloud -q container clusters get-credentials gce-asia-east1-a --zone=asia-east1-a --project=${FED_PROJECT}
+
+# init federation
+# ref: https://kubernetes.io/docs/tutorials/federation/set-up-cluster-federation-kubefed/
+
+kubefed init federation --image=gcr.io/google_containers/hyperkube-amd64:v1.5.1 --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER} --dns-zone-name=${FED_DNS_ZONE}
+
+# join federation
+kubefed --context=federation join cluster-europe-west1-b --cluster-context=gke_${FED_PROJECT}_europe-west1-b_gce-europe-west1-b --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER}
+
+kubefed --context=federation join cluster-asia-east1-a --cluster-context=gke_${FED_PROJECT}_asia-east1-a_gce-asia-east1-a --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER}
+
+kubefed --context=federation join cluster-us-east1-b --cluster-context=gke_${FED_PROJECT}_us-east1-b_gce-us-east1-b --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER}
+
+

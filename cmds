@@ -1,3 +1,5 @@
+cluster': 201, 'match_id': '3049628308', 'replay_salt': 564425761
+
 // build from scratch
 docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/dota2:v4-3 .
 

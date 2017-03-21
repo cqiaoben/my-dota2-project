@@ -1,19 +1,27 @@
+# docker
+
+sudo usermod -aG docker $(whoami)
+
+newgrp docker
+
+# env variable
+
 export FED_HOST_CLUSTER=us-east1-b
 
 export FED_PROJECT=cs193s-cqiaoben-3-20
 
-export FED_DNS_ZONE=cqiaoben.com
+export FED_DNS_ZONE=cqiaoben.com.
 
 # create clusters
 
 gcloud container clusters create gce-us-east1-b --project=${FED_PROJECT} \
---zone=us-east1-b --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=0 --max-nodes=5
+--zone=us-east1-b --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=1 --max-nodes=5
 
 gcloud container clusters create gce-europe-west1-b --project=${FED_PROJECT} \
---zone=europe-west1-b --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=0 --max-nodes=5 
+--zone=europe-west1-b --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=1 --max-nodes=5 
 
 gcloud container clusters create gce-asia-east1-a --project=${FED_PROJECT} \
---zone=asia-east1-a --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=0 --max-nodes=5
+--zone=asia-east1-a --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin --enable-autoscaling --min-nodes=1 --max-nodes=5
 
 # get credentials
 
@@ -26,7 +34,7 @@ gcloud -q container clusters get-credentials gce-asia-east1-a --zone=asia-east1-
 # init federation
 # ref: https://kubernetes.io/docs/tutorials/federation/set-up-cluster-federation-kubefed/
 
-kubefed init federation --image=gcr.io/google_containers/hyperkube-amd64:v1.5.1 --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER} --dns-zone-name=${FED_DNS_ZONE}
+kubefed init federation --image=gcr.io/google_containers/hyperkube-amd64:v1.5.2 --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER} --dns-zone-name=${FED_DNS_ZONE}
 
 # join federation
 kubefed --context=federation join cluster-europe-west1-b --cluster-context=gke_${FED_PROJECT}_europe-west1-b_gce-europe-west1-b --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER}
@@ -35,4 +43,26 @@ kubefed --context=federation join cluster-asia-east1-a --cluster-context=gke_${F
 
 kubefed --context=federation join cluster-us-east1-b --cluster-context=gke_${FED_PROJECT}_us-east1-b_gce-us-east1-b --host-cluster-context=gke_${FED_PROJECT}_${FED_HOST_CLUSTER}_gce-${FED_HOST_CLUSTER}
 
+# remove clusters
+gcloud -q container clusters delete gce-us-east1-b --project=${FED_PROJECT} --zone=us-east1-b
+gcloud -q container clusters delete gce-europe-west1-b --project=${FED_PROJECT} --zone=europe-west1-b
+gcloud -q container clusters delete gce-asia-east1-a --project=${FED_PROJECT} --zone=asia-east1-a
 
+# unset config
+kubectl config unset clusters.federation
+kubectl config unset users.federation
+kubectl config unset contexts.federation
+
+# remove federation
+
+kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b delete namespace federation-system
+
+# credential
+
+/kubectl config set-credentials test --client-certificate=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --token=/var/run/secrets/kubernetes.io/serviceaccount/token --namespace=/var/run/secrets/kubernetes.io/serviceaccount/namespace
+
+/kubectl config set-cluster federation --server=https://35.185.62.190 --certificat-authority=~/credential-cluster
+
+/kubectl config set-credentials federation --client-certificate=~/credential-admin --client-key=~/key-admin
+
+/kubectl config set-context federation --cluster=federation --user=federation --context=federation

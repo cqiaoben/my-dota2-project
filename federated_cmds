@@ -57,12 +57,17 @@ kubectl config unset contexts.federation
 
 kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b delete namespace federation-system
 
-# credential
+# remove svc in subclusters.
 
-/kubectl config set-credentials test --client-certificate=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --token=/var/run/secrets/kubernetes.io/serviceaccount/token --namespace=/var/run/secrets/kubernetes.io/serviceaccount/namespace
+kubectl --context=gke_cs193s-cqiaoben-3-20_europe-west1-b_gce-europe-west1-b delete svc salt
+kubectl --context=gke_cs193s-cqiaoben-3-20_europe-west1-b_gce-europe-west1-b delete deployments salt
 
-/kubectl config set-cluster federation --server=https://35.185.62.190 --certificat-authority=~/credential-cluster
 
-/kubectl config set-credentials federation --client-certificate=~/credential-admin --client-key=~/key-admin
+kubectl --context=gke_cs193s-cqiaoben-3-20_asia-east1-a_gce-asia-east1-a  delete svc salt
+kubectl --context=gke_cs193s-cqiaoben-3-20_asia-east1-a_gce-asia-east1-a  delete deployments salt
 
-/kubectl config set-context federation --cluster=federation --user=federation --context=federation
+
+
+kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b    delete svc salt
+kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b    delete deployments salt
+

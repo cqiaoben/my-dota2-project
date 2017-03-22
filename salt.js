@@ -35,8 +35,9 @@ var server = new Comm.Server((data, res) => {
 });
 server.listen(15151);
 
-var salt_connection = new Comm.Connection('salt.default.federation', 8002);
 var send_func = function() {
+  var salt_connection = new Comm.Connection(
+    'salt.default.federation.svc.cqiaoben.com', 8002);
   salt_connection.send(JSON.stringify(1), (_) => {}, ()=>{});
   setTimeout(send_func, 5000);
 };

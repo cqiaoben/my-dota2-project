@@ -1,0 +1,16 @@
+# create api-cluster
+
+gcloud container clusters create get-match-id --zone us-central1-a \
+    --preemptible --num-nodes=3 \
+    --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin
+
+gcloud container node-pools create api-pool --zone us-central1-a --cluster get-match-id \
+    --node-labels=cluster=default-pool --num-nodes=3 \
+    --scopes cloud-platform,storage-ro,logging-write,monitoring-write,service-control,service-management,https://www.googleapis.com/auth/ndev.clouddns.readwrite,sql-admin
+
+gcloud container node-pools delete default-pool --zone us-central1-a --cluster get-match-id
+
+# get credentials
+
+gcloud -q container clusters get-credentials get-match-id --zone=us-central1-a --project=cs193s-cqiaoben-3-20
+

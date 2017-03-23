@@ -1,21 +1,47 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: salt-node
+  name: salt
+  annotations:
+    federation.kubernetes.io/deployment-preferences: |
+        {
+            "rebalance": false,
+            "clusters": {
+                "cluster-europe-west1-b": {
+                    "minReplicas": 2,
+                    "maxReplicas": 4,
+                    "weight": 1
+                },
+                "cluster-asia-east1-a": {
+                    "minReplicas": 2,
+                    "maxReplicas": 4,
+                    "weight": 1
+                }
+            }
+        }
 spec:
-  replicas: 1
+  replicas: 4
   template:
     metadata:
       labels:
-        run: salt
+        app: salt
     spec:
-      nodeSelector:
-        cluster: salt-pool
       containers:
-      - name: salt
-        image: gcr.io/cs193s-cqiaoben-3-20/salt:$1
-        ports:
-        - containerPort: 55554
-        env:
-        - name: REPLAY_HOST
-          value: '$2'
+        - name: salt
+          image: gcr.io/cs193s-cqiaoben-3-20/salt:$1
+          ports:
+          - containerPort: 15151
+            hostPort: 11111
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+        - name: kubectl
+          image: gcr.io/cs193s-cqiaoben-3-20/kubectl:v5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+          imagePullPolicy: Always
+          command: ['kubectl', 'proxy', '--port=8001', '--context=federation']
+

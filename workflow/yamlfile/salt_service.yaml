@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: salt
   labels:
-    run: salt
+    app: salt
+  name: salt
 spec:
   ports:
-  - port: 55554
-    targetPort: 55554
+  - port: 8002
     protocol: TCP
+    targetPort: 15151
+    name: http
   selector:
-    run: salt
+    app: salt
+  type: LoadBalancer

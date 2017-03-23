@@ -1,7 +1,7 @@
 #!/bin/bash
 
 docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/api-hitter:$1 -f dockerfile/api_hitter.docker .
-gcloud docker push gcr.io/cs193s-cqiaoben-3-20/api-hitter:$1
+gcloud docker -- push gcr.io/cs193s-cqiaoben-3-20/api-hitter:$1
 
 rm -f temp.yaml
 

@@ -8,7 +8,7 @@ var user = new Api.User('DB68D75E77E22C0888179CB78F0BF3C9');
 var validate_match = Api.validate_match;
 var proxy = new Proxy(process.argv[3]);
 var backup_connection = new Comm.Connection(process.argv[2], 12345);
-var salt_connection = new Comm.Connection(process.argv[4], 55554);
+var salt_connection = new Comm.Connection(process.argv[4], 8002);
 
 var match_seq_num;
 var start = () => {

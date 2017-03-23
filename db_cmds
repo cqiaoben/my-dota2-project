@@ -1,11 +1,13 @@
+# create databse
+create database dota2;
+use dota2;
+
 # create tables
+
 create table test_matches (
    match_id Bigint,
    ts TIMESTAMP default current_timestamp,
    primary key(match_id));
-
-
-# create trigger to record max_seq_num
 
 create table seq (
    seq_num Bigint,

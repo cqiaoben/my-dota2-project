@@ -9,7 +9,7 @@ var spawn_server = function() {
   var server = new Comm.Server((data, res) => {
     var match_pool = JSON.parse(data);
     match_pool.forEach((elem) => {
-      if (Math.random() > 0.1) return; // parse 10%
+      if (Math.random() > 0.03) return; // parse 3%
       var handler = handler_queue.shift();
       if (!handler) {
         mid_queue.push(elem);
@@ -30,13 +30,10 @@ for (var i = 200; i < 400; i++) {
 var active_accounts = [];
 var handler_queue = []; // idle connection to handle mid
 var mid_queue = [];  // mids waiting for idle connections
-var count = 0;
 
 var c_exit = function() {
-  var api_url = "http://localhost:8001/apis/extensions/v1beta1/namespaces/default/deployments/salt";
-  var annotation_path = "/metadata/annotations/federation.kubernetes.io~1deployment-preferences";
-   } 
-  ];
+  var api_url = 'http://localhost:8001/apis/extensions/v1beta1/namespaces/default/deployments/salt';
+  var annotation_path = '/metadata/annotations/federation.kubernetes.io~1deployment-preferences';
   var gen_cluster = function(clusters) {
     var current_clusters = JSON.parse(clusters).clusters;
     var current_cluster = Object.keys(current_clusters)[0];
@@ -59,8 +56,8 @@ var c_exit = function() {
     var clusters = old_body;
     var new_annotation = gen_cluster(clusters);
     var request_body = JSON.stringify([
-      {"op": "test", "path": annotation_path, "value": old_body},
-      {"op": "replace", "path": annotation_path, "value": new_annotation}
+      {'op': 'test', 'path': annotation_path, 'value': old_body},
+      {'op': 'replace', 'path': annotation_path, 'value': new_annotation}
     ]);
     request({
       headers: {'Content-Type': 'application/json-patch+json'},
@@ -89,17 +86,16 @@ var c_exit = function() {
       method: 'GET'
     }, function(e, r, b) {
       if (e) {
-	console.log('fail');
+        console.log('fail');
         // Retry
         setTimeout(get_annotation, 5000);
-	return;
+        return;
       }
       try {
-	date = r.headers.date;
-	var annotation = JSON.parse(b).metadata.annotations['federation.kubernetes.io/deployment-preferences'];
-	update_annotation(annotation);
+        var annotation = JSON.parse(b).metadata.annotations['federation.kubernetes.io/deployment-preferences'];
+        update_annotation(annotation);
       } catch (e) {
-	console.log(e);
+        console.log(e);
       } 
     });
   };
@@ -162,7 +158,6 @@ var spawn_client = function () {
   };
 
   var onSteamLogOn = function onSteamLogOn(logonResp) {
-    count += 1;
     if (logonResp.eresult == Steam.EResult.OK) {
       Dota2.launch();
       Dota2.on('ready', function() {
@@ -185,6 +180,6 @@ var spawn_client = function () {
 };
 
 spawn_server();
-for (var i = 0; i < 100; i++) {
+for (i = 0; i < 100; i++) {
   spawn_client();
 }

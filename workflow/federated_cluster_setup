@@ -60,14 +60,12 @@ kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b delete name
 # remove svc in subclusters.
 
 kubectl --context=gke_cs193s-cqiaoben-3-20_europe-west1-b_gce-europe-west1-b delete svc salt
-kubectl --context=gke_cs193s-cqiaoben-3-20_europe-west1-b_gce-europe-west1-b delete deployments salt
-
 
 kubectl --context=gke_cs193s-cqiaoben-3-20_asia-east1-a_gce-asia-east1-a  delete svc salt
-kubectl --context=gke_cs193s-cqiaoben-3-20_asia-east1-a_gce-asia-east1-a  delete deployments salt
-
-
 
 kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b    delete svc salt
-kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b    delete deployments salt
 
+kubectl --context=federation delete deployments salt
+kubectl --context=gke_cs193s-cqiaoben-3-20_us-east1-b_gce-us-east1-b    delete deployments salt
+kubectl --context=gke_cs193s-cqiaoben-3-20_asia-east1-a_gce-asia-east1-a  delete deployments salt
+kubectl --context=gke_cs193s-cqiaoben-3-20_europe-west1-b_gce-europe-west1-b delete deployments salt

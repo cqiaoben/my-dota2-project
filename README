@@ -16,3 +16,22 @@ How to deploy:
 
 1. go to workflow folder
 2. run bash launcher/start.sh <version_number>
+
+
+How to set up:
+1. go to workflow folder
+----- cluster set up -----
+2. follow federated_cluster_setup to set up federated cluster
+3. create db instance, enable cloud sql api for the project
+4. run db_cmds to create tables etc. in db
+5. run cluster_setup to set up get-match-id cluster
+---- deployment ----
+6. run launcher/kubectl.sh to get kubectl proxy with admin
+   credential
+7. create sql secret. follow guides in:
+   https://cloud.google.com/sql/docs/mysql/connect-container-engine
+   user role: editor instead of cloud sql editor
+8. run launcher/starter.sh to set up service in get-match-id
+
+To clean up:
+1. run launcher/clean_starter.sh

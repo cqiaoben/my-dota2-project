@@ -1,18 +1,5 @@
 #!/bin/bash
 
-docker build --no-cache -t gcr.io/cs193s-cqiaoben-3-20/salt:$1 -f dockerfile/salt.docker .
-gcloud docker -- push gcr.io/cs193s-cqiaoben-3-20/salt:$1
-
-rm -f temp.yaml
-
-FILE=$(cat yamlfile/salt_node.yaml)
-FILE1=${FILE/\$1/$1}
-FILE2=${FILE1/\$2/$2}
-echo "$FILE2" > temp.yaml
-kubectl --context=federation create -f ./temp.yaml
-
-sleep 30
-
 kubectl annotate --context=federation deployments salt --overwrite "federation.kubernetes.io/deployment-preferences"='{
             "rebalance": false,
             "clusters": {

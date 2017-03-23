@@ -7,7 +7,8 @@ console.log(process.argv);
 var user = new Api.User('987205C8EF565CB4208D3B9235C40190');
 var validate_match = Api.validate_match;
 var proxy = new Proxy(process.argv[2]);
-var server = new Comm.Server((match_seq_number, response) => {
+var server = new Comm.Server((match_seq_num, response) => {
+  var match_seq_number = JSON.parse(match_seq_num);
   user.request(match_seq_number, (str) => {
     parse_and_send(str, response, match_seq_number);
   });

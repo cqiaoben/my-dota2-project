@@ -6,6 +6,11 @@ FROM alpine:3.4
 
 ADD https://storage.googleapis.com/kubernetes-release/release/v1.5.3/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 
+RUN mkdir -p /config/.kube
+
+ADD config /config/.kube/config
+RUN chmod 777 /config/.kube/config
+
 ENV HOME=/config
 
 RUN set -x && \
@@ -18,7 +23,6 @@ RUN set -x && \
     # Basic check it works.
     kubectl version --client
 
-ADD config /config/.kube/config
 USER kubectl
 
-
+CMD '/bin/sh'

@@ -8,6 +8,7 @@ var Comm = require('../libs/communication');
 var spawn_server = function() {
   var server = new Comm.Server((data, res) => {
     var match_pool = JSON.parse(data);
+    console.log(match_pool);
     match_pool.forEach((elem) => {
       if (Math.random() > 0.03) return; // parse 3%
       var handler = handler_queue.shift();
@@ -19,7 +20,7 @@ var spawn_server = function() {
     });
     res.end();
   });
-  server.listen(55554);
+  server.listen(15151);
 };
 
 var accounts = [];
@@ -43,8 +44,11 @@ var c_exit = function() {
       'cluster-us-east1-b': 'cluster-europe-west1-b',
     };
     if (current_clusters[current_cluster]['minReplicas'] == 1) {
-      current_clusters[next_cluster[current_cluster]] = current_clusters[current_cluster];
-      current_clusters.delete(current_cluster);
+      current_clusters[next_cluster[current_cluster]] = {
+                    "minReplicas": 1,
+                    "maxReplicas": 1,
+                    "weight": 1
+      };
     } else {
       current_clusters[current_cluster]['minReplicas'] -= 1;
       current_clusters[current_cluster]['maxReplicas'] -= 1;
@@ -53,12 +57,14 @@ var c_exit = function() {
   };
 
   var update_annotation = function(old_body) {
+    console.log('updating annotation');
     var clusters = old_body;
     var new_annotation = gen_cluster(clusters);
     var request_body = JSON.stringify([
       {'op': 'test', 'path': annotation_path, 'value': old_body},
-      {'op': 'replace', 'path': annotation_path, 'value': new_annotation}
+      {'op': 'replace', 'path': annotation_path, 'value': JSON.stringify(new_annotation)}
     ]);
+    console.log(request_body);
     request({
       headers: {'Content-Type': 'application/json-patch+json'},
       url: api_url,
@@ -75,11 +81,13 @@ var c_exit = function() {
         console.log('update succeed');
         process.exit();
       }
+      console.log(e, r, b);
       setTimeout(get_annotation, 5000);
     });
   };
   
   var get_annotation = function() {
+    console.log(api_url);
     request({
       headers: {'Content-Type': 'application/json-patch+json'},
       url: api_url,
@@ -93,6 +101,7 @@ var c_exit = function() {
       }
       try {
         var annotation = JSON.parse(b).metadata.annotations['federation.kubernetes.io/deployment-preferences'];
+        console.log(annotation);
         update_annotation(annotation);
       } catch (e) {
         console.log(e);
